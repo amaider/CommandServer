@@ -67,12 +67,12 @@ import Network
                 
                 self.connectionsHistory.append("\(Date.now): \(request)")
                 
-                /// parse subdomain
+                /// parse paths
                 if request.contains("GET /sleep") {
                     self.sendResponse(response: "HTTP/1.1 200 OK\r\n\r\n", to: connection)
                     sendToSleep = true
                 } else {
-                    self.sendResponse(response: "HTTP/1.1 404 Not Found\r\nContent-Type: plain/text\r\n\r\n Subdomain not implemented\r\n", to: connection)
+                    self.sendResponse(response: "HTTP/1.1 404 Not Found\r\nContent-Type: plain/text\r\n\r\n Path not implemented\r\n", to: connection)
                 }
                 
                 /// send to sleep after response?
