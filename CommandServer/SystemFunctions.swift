@@ -11,6 +11,9 @@ func macOSSleep() {
     let script: String = """
     tell application "System Events" to sleep
     """
+    
+//    let script: String = "pmset displaysleepnow"
+    
 //    let script: String = """
 //    set theDialogText to "The curent date and time is " & (current date) & "."
 //    display dialog theDialogText
