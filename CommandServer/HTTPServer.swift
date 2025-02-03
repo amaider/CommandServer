@@ -1,4 +1,4 @@
-// 2025-02-02, Swift 6.0, macOS 15.1, Xcode 16.0
+// 2025-02-02, Swift 5, macOS 15.1, Xcode 16.0
 // Copyright © 2025 amaider. (github.com/amaider)
 
 import Foundation
@@ -27,6 +27,10 @@ import Network
         self.start()
     }
     
+    deinit {
+        self.stop()
+    }
+    
     func start() {
         let parameters: NWParameters = .tcp
         parameters.allowLocalEndpointReuse = true
@@ -53,15 +57,13 @@ import Network
             connection.start(queue: .main)
             
             connection.receive(minimumIncompleteLength: 1, maximumLength: 512, completion: { data, context, isComplete, error in
-                var sendToSleep: Bool = false
-                
                 guard let data else {
-                    self.sendResponse(response: "HTTP/1.1 400 Bad Request\r\nContent-Type: plain/text\r\n\r\nError: No Data\r\n", to: connection)
+                    self.sendResponse(code: 400, reasonPhrase: "Bad Request", body: "Error: No Data", to: connection)
                     return
                 }
                 
                 guard let request: String = String(data: data, encoding: .utf8) else {
-                    self.sendResponse(response: "HTTP/1.1 400 Bad Request\r\nContent-Type: plain/text\r\n\r\nError: Data -> String\r\n", to: connection)
+                    self.sendResponse(code: 400, reasonPhrase: "Bad Request", body: "Error: Data -> String", to: connection)
                     return
                 }
                 
@@ -69,15 +71,10 @@ import Network
                 
                 /// parse paths
                 if request.contains("GET /sleep") {
-                    self.sendResponse(response: "HTTP/1.1 200 OK\r\n\r\n", to: connection)
-                    sendToSleep = true
-                } else {
-                    self.sendResponse(response: "HTTP/1.1 404 Not Found\r\nContent-Type: plain/text\r\n\r\n Path not implemented\r\n", to: connection)
-                }
-                
-                /// send to sleep after response?
-                if sendToSleep {
+                    self.sendResponse(code: 200, reasonPhrase: "OK", body: "", to: connection)
                     macOSSleep()
+                } else {
+                    self.sendResponse(code: 404, reasonPhrase: "Not Found", body: "Path not implemented", to: connection)
                 }
             })
             
@@ -94,7 +91,8 @@ import Network
         listener.cancel()
     }
     
-    func sendResponse(response: String, to connection: NWConnection) {
+    func sendResponse(code: Int, reasonPhrase: String, body: String, to connection: NWConnection) {
+        let response: String = "HTTP/1.1 \(code) \(reasonPhrase)\r\nContent-Type: plain/text\r\n\r\n\(body)\r\n"
         connection.send(content: response.data(using: .utf8), completion: .contentProcessed({ error in
             if let error {
                 print("Error sending: \(error)")

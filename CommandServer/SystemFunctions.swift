@@ -1,4 +1,4 @@
-// 2025-02-02, Swift 6.0, macOS 15.1, Xcode 16.0
+// 2025-02-02, Swift 5, macOS 15.1, Xcode 16.0
 // Copyright © 2025 amaider. (github.com/amaider)
 
 /// Singing & Capabilities -> Hardened Runtime -> Resource Access -> Apple Events
@@ -9,12 +9,15 @@ import Foundation
 
 func macOSSleep() {
     let script: String = """
-    tell application "System Events" to sleep
-    """
+        tell application "System Events" to sleep
+        """
+    
+//    let script: String = "pmset displaysleepnow"
+    
 //    let script: String = """
-//    set theDialogText to "The curent date and time is " & (current date) & "."
-//    display dialog theDialogText
-//    """
+//      set theDialogText to "The curent date and time is " & (current date) & "."
+//      display dialog theDialogText
+//      """
     
     DispatchQueue.global(qos: .background).async {
         let appleScript: NSAppleScript? = NSAppleScript(source: script)

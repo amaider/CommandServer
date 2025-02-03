@@ -1,4 +1,4 @@
-// 2025-02-02, Swift 6.0, macOS 15.1, Xcode 16.0
+// 2025-02-02, Swift 5, macOS 15.1, Xcode 16.0
 // Copyright © 2025 amaider. (github.com/amaider)
 
 import SwiftUI
