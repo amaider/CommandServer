@@ -10,8 +10,8 @@ struct CommandServerApp: App {
     
     var body: some Scene {
         MenuBarExtra(content: {
-            Text("Listener: \(server.listenerState)")
-            Text("Connection: \(server.connectionState)")
+            Text("Listener: \(String(describing: server.listenerState))")
+            Text("Connection: \(String(describing: server.connectionStatus))")
             
             Button("Restart Server", action: {
                 server.stop()

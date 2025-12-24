@@ -5,20 +5,8 @@ import Foundation
 import Network
 
 @Observable class HTTPServer {
-    var listenerState: String = "nil"
+    var listenerState: NWListener.State?
     var connectionStatus: NWConnection.State?
-    var connectionState: String {
-        switch self.connectionStatus {
-            case .setup: "setup"
-            case .waiting(let nWError): "waiting(\(nWError))"
-            case .preparing: "preparing"
-            case .ready: "ready"
-            case .failed(let nWError): "failed(\(nWError))"
-            case .cancelled: "cancelled"
-            case .none: "none"
-            case .some(let str): "some(\(str))"
-        }
-    }
     var connectionsHistory: [String] = []
     
     @ObservationIgnored private var listener: NWListener!
@@ -42,14 +30,7 @@ import Network
             return
         }
         listener.stateUpdateHandler = { state in
-            switch state {
-                case .setup: self.listenerState = "setup"
-                case .waiting(let nWError): self.listenerState = "waiting(\(nWError))"
-                case .ready: self.listenerState = "ready"
-                case .failed(let nWError): self.listenerState = "failed(\(nWError))"
-                case .cancelled: self.listenerState = "cancelled"
-                @unknown default: self.listenerState = "default"
-            }
+            self.listenerState = state
         }
         
         /// handle connection
