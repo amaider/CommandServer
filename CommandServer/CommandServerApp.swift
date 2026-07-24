@@ -6,12 +6,23 @@ import ServiceManagement
 
 @main
 struct CommandServerApp: App {
-    let server: HTTPServer = HTTPServer()
+    // let server: HTTPServer = HTTPServer()
+    let server: HTTPServer = HTTPServer(routes: [
+        "sleep": {
+            macOSSleep()
+            return nil
+        },
+        "alive": { return "alive" },
+    ])
+    
+    let ipv4: String? = getIPv4Address()
     
     var body: some Scene {
         MenuBarExtra(content: {
-            Text("Listener: \(String(describing: server.listenerState))")
-            Text("Connection: \(String(describing: server.connectionStatus))")
+            Text("http://\(ipv4 ?? "nil"):8080")
+            Text("Listener: \(server.listenerState?.string ?? "nil")")
+                .foregroundStyle(server.listenerState == .ready ? .green : .primary)
+            Text("Connection: \(server.connectionStatus?.string ?? "nil")")
             
             Button("Restart Server", action: {
                 server.stop()
